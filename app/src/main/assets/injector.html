@@ -71,7 +71,6 @@ html, body {
 .minimize-btn { color: #ffaa00; }
 .close-btn { color: var(--red); }
 
-/* System Status List */
 .sys-status {
     font-size: 9px;
     color: var(--mut);
@@ -89,7 +88,7 @@ html, body {
 .sys-row:last-child { margin-bottom: 0; }
 .sys-val { color: var(--red); font-weight: bold; }
 
-/* Radar & Number Scrolling Box */
+/* Radar & Slot Reel Container */
 .radar-container {
     position: relative;
     width: 85px;
@@ -105,28 +104,9 @@ html, body {
     overflow: hidden;
 }
 
-/* Radar Ring Scanner */
-.radar-sweep {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: conic-gradient(from 0deg at 50% 50%, rgba(255,51,51,0.7) 0deg, transparent 60deg, transparent 360deg);
-    animation: spinSweep 1s linear infinite;
-    display: none;
-}
-@keyframes spinSweep {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
 .radar-core {
     position: relative;
     z-index: 5;
-    font-size: 22px;
-    font-weight: bold;
-    color: var(--red);
-    text-shadow: 0 0 10px var(--red);
     background: rgba(18, 5, 5, 0.95);
     width: 60px;
     height: 60px;
@@ -135,10 +115,31 @@ html, body {
     justify-content: center;
     align-items: center;
     border: 1px dashed var(--line);
-    text-align: center;
+    overflow: hidden;
 }
 
-/* Prediction Details Info */
+/* Vertical Slot Reel Animation */
+.slot-viewport {
+    height: 40px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    text-align: center;
+}
+.slot-reel {
+    position: absolute;
+    width: 100%;
+    transition: transform 1.5s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+.slot-item {
+    height: 40px;
+    line-height: 40px;
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--red);
+    text-shadow: 0 0 8px var(--red);
+}
+
 .info-box {
     display: flex;
     justify-content: space-between;
@@ -151,7 +152,6 @@ html, body {
 }
 .info-box span b { color: var(--red); }
 
-/* Period Box */
 .period-bar {
     background: #0d0202;
     border: 1px solid var(--line);
@@ -165,7 +165,6 @@ html, body {
 }
 .period-bar b { color: var(--red); }
 
-/* Execute Button */
 .btn-exec {
     background: linear-gradient(135deg, #cc0000, #ff3333);
     border: none;
@@ -181,7 +180,6 @@ html, body {
 }
 .btn-exec:active { transform: scale(0.98); }
 
-/* Minimized Floating Bubble */
 .minimized-ball {
     display: none;
     background: #120505;
@@ -203,7 +201,6 @@ html, body {
 </head>
 <body>
 <div class="app">
-    <!-- Main Panel -->
     <div class="panel" id="mainCard">
         <div class="head">
             <div class="title-box">
@@ -222,9 +219,14 @@ html, body {
             <div class="sys-row"><span>Bypass Status</span><span class="sys-val">ACTIVE</span></div>
         </div>
 
-        <div class="radar-container" id="radarContainer">
-            <div class="radar-sweep" id="radarSweep"></div>
-            <div class="radar-core" id="resBox">READY</div>
+        <div class="radar-container">
+            <div class="radar-core">
+                <div class="slot-viewport">
+                    <div class="slot-reel" id="slotReel">
+                        <div class="slot-item">5</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="info-box">
@@ -239,13 +241,12 @@ html, body {
         <button class="btn-exec" onclick="startHack()">⚡ EXECUTE HACK ⚡</button>
     </div>
 
-    <!-- Minimized Floating Bubble -->
     <div class="minimized-ball" id="minBall" onclick="restoreApp()">VIP</div>
 </div>
 
 <script>
 var currentPeriod = "";
-var currentNumber = "5";
+var currentNumber = 5;
 var currentSize = "BIG";
 
 function updateTimerAndPeriod() {
@@ -269,7 +270,7 @@ function updateTimerAndPeriod() {
     if (currentPeriod !== periodCode) {
         currentPeriod = periodCode;
         var lastDigit = parseInt(periodCode.slice(-1));
-        currentNumber = String(lastDigit);
+        currentNumber = lastDigit;
         currentSize = (lastDigit >= 5) ? "BIG" : "SMALL";
     }
 
@@ -278,26 +279,41 @@ function updateTimerAndPeriod() {
 
 setInterval(updateTimerAndPeriod, 1000);
 
-function startHack() {
-    var box = document.getElementById("resBox");
-    var sweep = document.getElementById("radarSweep");
-    var sizeRes = document.getElementById("sizeRes");
-    
-    sweep.style.display = "block"; // Radar scan line starts spinning
-    sizeRes.textContent = "SCANNING";
-    
-    // Number scrolling wheel effect matching video
-    var counter = 0;
-    var scrollInterval = setInterval(function() {
-        box.textContent = Math.floor(Math.random() * 10);
-        counter++;
-        if (counter > 12) {
-            clearInterval(scrollInterval);
-            sweep.style.display = "none";
-            box.textContent = currentNumber; // Final predicted number
-            sizeRes.textContent = currentSize; // Final BIG/SMALL size
+// Initialize slot reel with repeating numbers 0-9
+function initReel() {
+    var reel = document.getElementById("slotReel");
+    var html = "";
+    for (var i = 0; i < 6; i++) {
+        for (var n = 0; n <= 9; n++) {
+            html += '<div class="slot-item">' + n + '</div>';
         }
-    }, 100);
+    }
+    reel.innerHTML = html;
+}
+initReel();
+
+function startHack() {
+    var reel = document.getElementById("slotReel");
+    var sizeRes = document.getElementById("sizeRes");
+    sizeRes.textContent = "SCANNING";
+
+    var targetNum = currentNumber;
+    var itemHeight = 40;
+    // Set landing position on the 4th rotation set
+    var targetIndex = (4 * 10) + targetNum;
+    var offset = -(targetIndex * itemHeight);
+
+    reel.style.transition = "none";
+    reel.style.transform = "translateY(0px)";
+
+    setTimeout(function() {
+        reel.style.transition = "transform 1.5s cubic-bezier(0.1, 0.9, 0.2, 1)";
+        reel.style.transform = "translateY(" + offset + "px)";
+    }, 50);
+
+    setTimeout(function() {
+        sizeRes.textContent = currentSize;
+    }, 1550);
 }
 
 function minimizeApp() {
