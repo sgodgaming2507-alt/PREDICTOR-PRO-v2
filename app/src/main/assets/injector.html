@@ -1,71 +1,223 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Predictor Pro X</title>
+<title>VIP Number Panel</title>
 <style>
-:root{box-sizing:border-box;
---bg:transparent;--card:rgba(8, 23, 15, 0.95);--line:#1c5a3a;--txt:#e6fff0;--mut:#7fae95;--g:#2ee27a;--r:#ff5a5a;--v:#b48cff}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--txt);font-family:"Rajdhani","Segoe UI",system-ui,sans-serif;overflow:hidden;}
-.app{max-width:280px;margin:0 auto;padding:6px}
-.panel{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:12px;box-shadow:0 0 20px rgba(46,226,122,.25)}
-.head{display:flex;justify-content:space-between;gap:6px;align-items:center}
-h1{margin:0;font-size:16px;letter-spacing:1px}
-h1 span{color:var(--g)}
-.controls{display:flex;gap:4px;align-items:center}
-.timer-badge{background:#111;color:#ff5a5a;font-size:11px;padding:2px 6px;border-radius:4px;border:1px solid #ff5a5a;font-weight:700;}
-.action-btn{background:none;border:none;font-size:14px;font-weight:bold;cursor:pointer;padding:0 2px}
-.minimize-btn{color:#ffaa00}
-.close-btn{color:#ff5a5a}
+:root {
+    --bg: transparent;
+    --card: rgba(18, 5, 5, 0.96);
+    --line: #b32d2d;
+    --txt: #ffcccc;
+    --mut: #cc6666;
+    --red: #ff3333;
+    --glow: rgba(255, 51, 51, 0.35);
+}
+* { box-sizing: border-box; }
+html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--txt);
+    font-family: "Courier New", Courier, monospace, sans-serif;
+    overflow: hidden;
+}
+.app { max-width: 290px; margin: 0 auto; padding: 6px; }
+.panel {
+    background: var(--card);
+    border: 2px solid var(--red);
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow: 0 0 20px var(--glow);
+}
+.head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed var(--line);
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+}
+.title-box h1 {
+    margin: 0;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    color: var(--red);
+    font-weight: bold;
+}
+.title-box .sub {
+    font-size: 8px;
+    color: var(--mut);
+    letter-spacing: 1px;
+}
+.controls { display: flex; gap: 5px; align-items: center; }
+.timer-badge {
+    background: #0a0101;
+    color: var(--red);
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    border: 1px solid var(--red);
+    font-weight: bold;
+}
+.action-btn {
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0 2px;
+}
+.minimize-btn { color: #ffaa00; }
+.close-btn { color: var(--red); }
 
-.bar{display:flex;justify-content:space-between;border:1px solid var(--line);border-radius:10px;padding:6px 8px;margin:10px 0;font-size:12px;color:var(--mut)}
-.bar b{color:var(--txt)}
+/* Hacker Radar Scanner Animation */
+.radar-container {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 8px auto;
+    border: 2px solid var(--red);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 12px var(--glow) inset;
+    overflow: hidden;
+}
+.radar-beam {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg at 50% 50%, rgba(255,51,51,0.5) 0deg, transparent 60deg, transparent 360deg);
+    animation: spin 1.5s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.radar-core {
+    position: relative;
+    z-index: 2;
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--red);
+    text-shadow: 0 0 8px var(--red);
+    background: rgba(18, 5, 5, 0.85);
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px dashed var(--line);
+}
 
-.stage{border:1px solid var(--line);border-radius:12px;padding:10px 6px;background:linear-gradient(rgba(46,226,122,.08),transparent);text-align:center}
-.result-box{width:65px;height:65px;border-radius:50%;display:inline-grid;place-items:center;font-size:22px;font-weight:700;color:var(--g);background:radial-gradient(circle at 35% 30%,#fff,#7ff0b0 55%,#1fa85c);border:3px solid var(--g);box-shadow:0 0 15px rgba(46,226,122,.6)}
-.result-box.small{color:#ff5a5a;background:radial-gradient(circle at 35% 30%,#fff,#ffb0b0 55%,#e04545);border-color:var(--r);box-shadow:0 0 15px rgba(255,90,90,.6)}
+/* System Status List */
+.sys-status {
+    font-size: 9px;
+    color: var(--mut);
+    background: #0d0202;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 6px;
+    margin-bottom: 8px;
+}
+.sys-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 3px;
+}
+.sys-row:last-child { margin-bottom: 0; }
+.sys-val { color: var(--red); font-weight: bold; }
 
-.guess{display:flex;gap:6px;margin:10px 0}
-.guess div{flex:1;border:1px solid var(--line);border-radius:10px;padding:6px;text-align:center;font-weight:700;font-size:14px;color:var(--g);background:#04100a}
-.guess small{display:block;color:var(--mut);font-weight:400;font-size:10px}
+/* Period Box */
+.period-bar {
+    background: #0d0202;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 5px;
+    text-align: center;
+    font-size: 10px;
+    color: var(--txt);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+.period-bar b { color: var(--red); }
 
-.btns{display:flex;gap:6px}
-button{flex:1;font:inherit;font-weight:700;font-size:14px;min-height:38px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);color:var(--txt);cursor:pointer}
-.go{background:linear-gradient(#2ee27a,#12a850);color:#04180c;border:0}
+/* Execute Button */
+.btn-exec {
+    background: linear-gradient(135deg, #cc0000, #ff3333);
+    border: none;
+    color: #fff;
+    width: 100%;
+    padding: 7px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--glow);
+}
+.btn-exec:active { transform: scale(0.98); }
 
-.minimized-ball{display:none;background:#08170f;border:2px solid var(--g);color:var(--g);width:45px;height:45px;border-radius:50%;justify-content:center;align-items:center;font-weight:bold;font-size:12px;box-shadow:0 0 10px var(--g);cursor:pointer;text-align:center;line-height:41px}
+/* Minimized Floating Ball */
+.minimized-ball {
+    display: none;
+    background: #120505;
+    border: 2px solid var(--red);
+    color: var(--red);
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 11px;
+    box-shadow: 0 0 10px var(--red);
+    cursor: pointer;
+    text-align: center;
+    line-height: 38px;
+}
 </style>
 </head>
 <body>
 <div class="app">
-<div class="panel" id="mainCard">
-<div class="head">
-<div><h1>XS <span>PRO X</span></h1></div>
-<div class="controls">
-<span class="timer-badge" id="timer">00:30</span>
-<button class="action-btn minimize-btn" onclick="minimizeApp()">-</button>
-<button class="action-btn close-btn" onclick="closeApp()">×</button>
-</div>
-</div>
+    <!-- Main Panel -->
+    <div class="panel" id="mainCard">
+        <div class="head">
+            <div class="title-box">
+                <h1>VIP NUMBER PANEL</h1>
+                <div class="sub">ESTABLISHED SPLENDOR</div>
+            </div>
+            <div class="controls">
+                <span class="timer-badge" id="timer">00:30</span>
+                <button class="action-btn minimize-btn" onclick="minimizeApp()">-</button>
+                <button class="action-btn close-btn" onclick="closeApp()">×</button>
+            </div>
+        </div>
 
-<div class="bar"><span>Period <b id="seq">--</b></span><span>Mode <b>WinGo 30s</b></span></div>
+        <div class="sys-status">
+            <div class="sys-row"><span>Identity Verification</span><span class="sys-val">PASSED</span></div>
+            <div class="sys-row"><span>Server Handshake</span><span class="sys-val">PASSED</span></div>
+            <div class="sys-row"><span>Encryption Layer</span><span class="sys-val">SECURED</span></div>
+        </div>
 
-<div class="stage">
-<div class="result-box" id="resBox">READY</div>
-</div>
+        <div class="radar-container" id="radarBox">
+            <div class="radar-beam" id="radarBeam" style="display:none;"></div>
+            <div class="radar-core" id="resBox">READY</div>
+        </div>
 
-<div class="guess">
-<div><small>Prediction</small><span id="gs">--</span></div>
-</div>
+        <div class="period-bar">
+            PERIOD: <b id="periodText">--</b>
+        </div>
 
-<div class="btns">
-<button class="go" onclick="startHack()">⚡ START HACK ⚡</button>
-</div>
-</div>
+        <button class="btn-exec" onclick="startHack()">⚡ EXECUTE HACK ⚡</button>
+    </div>
 
-<div class="minimized-ball" id="minBall" onclick="restoreApp()">XS</div>
+    <!-- Minimized Floating Bubble -->
+    <div class="minimized-ball" id="minBall" onclick="restoreApp()">VIP</div>
 </div>
 
 <script>
@@ -96,25 +248,22 @@ function updateTimerAndPeriod() {
         currentPrediction = (lastDigit % 2 === 0) ? "BIG" : "SMALL";
     }
 
-    document.getElementById("seq").textContent = currentPeriod;
+    document.getElementById("periodText").textContent = currentPeriod;
 }
 
 setInterval(updateTimerAndPeriod, 1000);
 
 function startHack() {
     var box = document.getElementById("resBox");
+    var beam = document.getElementById("radarBeam");
+    
     box.textContent = "...";
+    beam.style.display = "block"; // Scanning animation start
     
     setTimeout(function() {
+        beam.style.display = "none"; // Animation stop
         box.textContent = currentPrediction;
-        document.getElementById("gs").textContent = currentPrediction;
-        
-        if (currentPrediction === "BIG") {
-            box.className = "result-box";
-        } else {
-            box.className = "result-box small";
-        }
-    }, 400);
+    }, 1200);
 }
 
 function minimizeApp() {
