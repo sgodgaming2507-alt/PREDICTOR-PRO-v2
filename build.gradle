@@ -1,13 +1,1 @@
-android {
-    namespace 'com.yadav.predictor.pro'
-    compileSdk 34
-
-    defaultConfig {
-        applicationId "com.yadav.predictor.pro"
-        minSdk 21
-        targetSdk 34
-        versionCode 1
-        versionName "2.0"
-        // baaki settings...
-    }
-}
+// Root build.gradle (Keep empty or minimal)
