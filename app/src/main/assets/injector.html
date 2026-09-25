@@ -89,7 +89,7 @@ html, body {
 .sys-row:last-child { margin-bottom: 0; }
 .sys-val { color: var(--red); font-weight: bold; }
 
-/* Video Style Radar & Scanning Box */
+/* Radar & Number Scrolling Box */
 .radar-container {
     position: relative;
     width: 85px;
@@ -105,23 +105,7 @@ html, body {
     overflow: hidden;
 }
 
-/* Crosshair Cross Lines */
-.radar-container::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 1px;
-    background: rgba(255, 51, 51, 0.5);
-}
-.radar-container::after {
-    content: '';
-    position: absolute;
-    height: 100%;
-    width: 1px;
-    background: rgba(255, 51, 51, 0.5);
-}
-
-/* Rotating Radar Line Animation */
+/* Radar Ring Scanner */
 .radar-sweep {
     position: absolute;
     width: 100%;
@@ -131,7 +115,6 @@ html, body {
     animation: spinSweep 1s linear infinite;
     display: none;
 }
-
 @keyframes spinSweep {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -140,13 +123,13 @@ html, body {
 .radar-core {
     position: relative;
     z-index: 5;
-    font-size: 15px;
+    font-size: 22px;
     font-weight: bold;
     color: var(--red);
-    text-shadow: 0 0 8px var(--red);
+    text-shadow: 0 0 10px var(--red);
     background: rgba(18, 5, 5, 0.95);
-    width: 58px;
-    height: 58px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -220,7 +203,6 @@ html, body {
 </head>
 <body>
 <div class="app">
-    <!-- Main Panel -->
     <div class="panel" id="mainCard">
         <div class="head">
             <div class="title-box">
@@ -256,13 +238,13 @@ html, body {
         <button class="btn-exec" onclick="startHack()">⚡ EXECUTE HACK ⚡</button>
     </div>
 
-    <!-- Minimized Floating Bubble -->
     <div class="minimized-ball" id="minBall" onclick="restoreApp()">VIP</div>
 </div>
 
 <script>
 var currentPeriod = "";
-var currentPrediction = "BIG";
+var currentNumber = "5";
+var currentSize = "BIG";
 
 function updateTimerAndPeriod() {
     var now = new Date();
@@ -285,7 +267,8 @@ function updateTimerAndPeriod() {
     if (currentPeriod !== periodCode) {
         currentPeriod = periodCode;
         var lastDigit = parseInt(periodCode.slice(-1));
-        currentPrediction = (lastDigit % 2 === 0) ? "BIG" : "SMALL";
+        currentNumber = String(lastDigit);
+        currentSize = (lastDigit >= 5) ? "BIG" : "SMALL";
     }
 
     document.getElementById("periodText").textContent = currentPeriod;
@@ -298,15 +281,21 @@ function startHack() {
     var sweep = document.getElementById("radarSweep");
     var sizeRes = document.getElementById("sizeRes");
     
-    box.textContent = "...";
+    sweep.style.display = "block"; // Radar scan line starts spinning
     sizeRes.textContent = "SCANNING";
-    sweep.style.display = "block"; // Video jaisi radar scanning animation start
     
-    setTimeout(function() {
-        sweep.style.display = "none"; // Animation stop
-        box.textContent = currentPrediction;
-        sizeRes.textContent = currentPrediction;
-    }, 1500);
+    // Number scrolling wheel effect matching video
+    var counter = 0;
+    var scrollInterval = setInterval(function() {
+        box.textContent = Math.floor(Math.random() * 10);
+        counter++;
+        if (counter > 12) {
+            clearInterval(scrollInterval);
+            sweep.style.display = "none";
+            box.textContent = currentNumber; // Final predicted number
+            sizeRes.textContent = currentSize; // Final BIG/SMALL size
+        }
+    }, 100);
 }
 
 function minimizeApp() {
