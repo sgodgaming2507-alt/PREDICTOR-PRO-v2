@@ -12,7 +12,7 @@
     --txt: #ffcccc;
     --mut: #cc6666;
     --red: #ff3333;
-    --glow: rgba(255, 51, 51, 0.35);
+    --glow: rgba(255, 51, 51, 0.4);
 }
 * { box-sizing: border-box; }
 html, body {
@@ -28,7 +28,7 @@ html, body {
     border: 2px solid var(--red);
     border-radius: 14px;
     padding: 10px;
-    box-shadow: 0 0 20px var(--glow);
+    box-shadow: 0 0 22px var(--glow);
 }
 .head {
     display: flex;
@@ -71,49 +71,6 @@ html, body {
 .minimize-btn { color: #ffaa00; }
 .close-btn { color: var(--red); }
 
-/* Hacker Radar Scanner Animation */
-.radar-container {
-    position: relative;
-    width: 80px;
-    height: 80px;
-    margin: 8px auto;
-    border: 2px solid var(--red);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 0 12px var(--glow) inset;
-    overflow: hidden;
-}
-.radar-beam {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: conic-gradient(from 0deg at 50% 50%, rgba(255,51,51,0.5) 0deg, transparent 60deg, transparent 360deg);
-    animation: spin 1.5s linear infinite;
-}
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-.radar-core {
-    position: relative;
-    z-index: 2;
-    font-size: 13px;
-    font-weight: bold;
-    color: var(--red);
-    text-shadow: 0 0 8px var(--red);
-    background: rgba(18, 5, 5, 0.85);
-    width: 62px;
-    height: 62px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px dashed var(--line);
-}
-
 /* System Status List */
 .sys-status {
     font-size: 9px;
@@ -131,6 +88,85 @@ html, body {
 }
 .sys-row:last-child { margin-bottom: 0; }
 .sys-val { color: var(--red); font-weight: bold; }
+
+/* Video Style Radar & Scanning Box */
+.radar-container {
+    position: relative;
+    width: 85px;
+    height: 85px;
+    margin: 8px auto;
+    border: 2px solid var(--red);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle, rgba(255,51,51,0.2) 0%, rgba(18,5,5,0.95) 80%);
+    box-shadow: 0 0 15px var(--glow) inset;
+    overflow: hidden;
+}
+
+/* Crosshair Cross Lines */
+.radar-container::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 51, 51, 0.5);
+}
+.radar-container::after {
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 1px;
+    background: rgba(255, 51, 51, 0.5);
+}
+
+/* Rotating Radar Line Animation */
+.radar-sweep {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg at 50% 50%, rgba(255,51,51,0.7) 0deg, transparent 60deg, transparent 360deg);
+    animation: spinSweep 1s linear infinite;
+    display: none;
+}
+
+@keyframes spinSweep {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.radar-core {
+    position: relative;
+    z-index: 5;
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--red);
+    text-shadow: 0 0 8px var(--red);
+    background: rgba(18, 5, 5, 0.95);
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px dashed var(--line);
+    text-align: center;
+}
+
+/* Prediction Details Info */
+.info-box {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    background: #0d0202;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 6px 8px;
+    margin-bottom: 8px;
+}
+.info-box span b { color: var(--red); }
 
 /* Period Box */
 .period-bar {
@@ -162,7 +198,7 @@ html, body {
 }
 .btn-exec:active { transform: scale(0.98); }
 
-/* Minimized Floating Ball */
+/* Minimized Floating Bubble */
 .minimized-ball {
     display: none;
     background: #120505;
@@ -199,14 +235,18 @@ html, body {
         </div>
 
         <div class="sys-status">
-            <div class="sys-row"><span>Identity Verification</span><span class="sys-val">PASSED</span></div>
-            <div class="sys-row"><span>Server Handshake</span><span class="sys-val">PASSED</span></div>
-            <div class="sys-row"><span>Encryption Layer</span><span class="sys-val">SECURED</span></div>
+            <div class="sys-row"><span>Server Status</span><span class="sys-val">CONNECTED</span></div>
+            <div class="sys-row"><span>Bypass Status</span><span class="sys-val">ACTIVE</span></div>
         </div>
 
-        <div class="radar-container" id="radarBox">
-            <div class="radar-beam" id="radarBeam" style="display:none;"></div>
+        <div class="radar-container" id="radarContainer">
+            <div class="radar-sweep" id="radarSweep"></div>
             <div class="radar-core" id="resBox">READY</div>
+        </div>
+
+        <div class="info-box">
+            <span>SIZE: <b id="sizeRes">--</b></span>
+            <span>ACCURACY: <b id="accRes">99.5%</b></span>
         </div>
 
         <div class="period-bar">
@@ -222,7 +262,7 @@ html, body {
 
 <script>
 var currentPeriod = "";
-var currentPrediction = "READY";
+var currentPrediction = "BIG";
 
 function updateTimerAndPeriod() {
     var now = new Date();
@@ -255,15 +295,18 @@ setInterval(updateTimerAndPeriod, 1000);
 
 function startHack() {
     var box = document.getElementById("resBox");
-    var beam = document.getElementById("radarBeam");
+    var sweep = document.getElementById("radarSweep");
+    var sizeRes = document.getElementById("sizeRes");
     
     box.textContent = "...";
-    beam.style.display = "block"; // Scanning animation start
+    sizeRes.textContent = "SCANNING";
+    sweep.style.display = "block"; // Video jaisi radar scanning animation start
     
     setTimeout(function() {
-        beam.style.display = "none"; // Animation stop
+        sweep.style.display = "none"; // Animation stop
         box.textContent = currentPrediction;
-    }, 1200);
+        sizeRes.textContent = currentPrediction;
+    }, 1500);
 }
 
 function minimizeApp() {
